@@ -4,11 +4,9 @@ shopt -s dotglob
 dir=$1
 regex="\.git"
 
-rm $HOME/git_to_push.log
-touch $HOME/git_to_push.log
+projectsdir="/Users/richardlucas/Projects"
 
-for projects in $dir*; do
-  echo P: $projects
+for projects in $projectsdir/*; do
   projdir=$projects
   subdirs="$(ls -al $projdir | grep -o \.git)"
   if [[ $subdirs =~ $regex ]]
@@ -24,7 +22,8 @@ for projects in $dir*; do
           #echo Pushed: $project to $branch
           echo Project $projects on $branch is ready to be pushed
           echo $git_status
-          echo $projects $git_status >> $HOME/git_to_push.log
+          touch $HOME/git_to_push.txt
+          echo $projects $git_status >> $HOME/git_to_push.txt
       fi
   fi
 done
