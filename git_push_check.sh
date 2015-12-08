@@ -8,9 +8,12 @@ projectsdir="/Users/richardlucas/Projects"
 
 for projects in $projectsdir/*; do
   projdir=$projects
-  subdirs="$(ls -al $projdir | grep -o \.git)"
+  echo Project directory: $projdir
+  subdirs="$(ls -al $projdir | grep -o \.git\/)"
+  echo SubDirs: $subdirs
   if [[ $subdirs =~ $regex ]]
     then
+      echo Checking: $projdir
       status="$(cd $projdir; git status | grep 'nothing to commit')"
       if [[ $status != "" ]]
         then
