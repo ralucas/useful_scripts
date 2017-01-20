@@ -1,16 +1,25 @@
-#!/bin/bash
+#!/bin/bash -ex
 
+NEW_TAG=$1
 BRANCH=`git rev-parse --abbrev-ref HEAD`
 CURR_TAG=`git describe --tags`
+CURR_DIR=`pwd`
 
-if [[ -z "$CURR_TAG" ]]; then
+if [ -z "$CURR_TAG" ] && [ -z "$NEW_TAG" ]; then
   NEW_TAG=0.0.1
 fi
 
-if [[ -z "$NEW_TAG" ]]; then
+if [ -z "$NEW_TAG" ]; then
   PATCH_VERSION=`echo $CURR_TAG | grep -o "[[:digit:]]$"`
   NEW_TAG=`echo $CURR_TAG | sed -e s/\.[[:digit:]]$/${PATCH_VERSION}/`
 fi
+
+if [ -a $CURR_DIR/package.json ]; then
+  echo "Bumping package.json to ${NEW_TAG}"
+  sed -i.bak "s/version\"\:.*/version\"\: \"${NEW_TAG}\"\,/" $CURR_DIR/package.json
+#  rm $CURR_DIR/package.json.bak
+fi
+
 echo "Tagging to ${NEW_TAG}"
 
 git add -A 
