@@ -2,7 +2,7 @@
 
 NEW_TAG=$1
 BRANCH=`git rev-parse --abbrev-ref HEAD`
-CURR_TAG=`git describe --tags`
+CURR_TAG=`git describe --abbrev=0 --tags`
 CURR_DIR=`pwd`
 
 if [ -z "$CURR_TAG" ] && [ -z "$NEW_TAG" ]; then
@@ -11,7 +11,8 @@ fi
 
 if [ -z "$NEW_TAG" ]; then
   PATCH_VERSION=`echo $CURR_TAG | grep -o "[[:digit:]]$"`
-  NEW_TAG=`echo $CURR_TAG | sed -e s/\.[[:digit:]]$/${PATCH_VERSION}/`
+  let NEW_PATCH=PATCH_VERSION+1
+  NEW_TAG=`echo $CURR_TAG | sed -e s/\.[[:digit:]]$/\.${NEW_PATCH}/`
 fi
 
 if [ -a $CURR_DIR/package.json ]; then
@@ -22,8 +23,8 @@ fi
 
 echo "Tagging to ${NEW_TAG}"
 
-git add -A 
-git commit -m "Updating ${BRANCH}" 
+git add -A
+git commit -m "Updating ${BRANCH}"
 git push origin ${BRANCH}
 git tag -a ${NEW_TAG} -m "Release ${NEW_TAG}"
 git push origin --tags
